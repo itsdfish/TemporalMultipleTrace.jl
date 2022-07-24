@@ -3,6 +3,11 @@ uuid = "8d3396ac-dd35-4c00-ba21-552760dec929"
 authors = ["itsdfish <itsdfish@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+ConcreteStructs = "2569d6c7-a4a2-43d3-a901-331e8e4be471"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
+
 [compat]
 julia = "1"
 
