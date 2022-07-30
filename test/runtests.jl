@@ -18,7 +18,7 @@ using SafeTestsets
     3.77165103e-01, 2.99193731e-01, 2.03934030e-01, 1.25023429e-01,
     7.08760990e-02, 3.78332748e-02]
 
-    vals = compute_activation.(t, τ, κ)
+    vals = cell_activation_func.(t, τ, κ)
     @test true_vals ≈ vals
 
     t = range(.1, 5, length=10)
@@ -30,14 +30,14 @@ using SafeTestsets
     1.12903685e-01, 1.42761391e-01, 1.61101874e-01, 1.67905060e-01,
     1.65018258e-01, 1.55024204e-01]
 
-    vals = compute_activation.(t, τ, κ)
+    vals = cell_activation_func.(t, τ, κ)
     @test true_vals ≈ vals
 
     t = range(1, 3, length=200)
     τ = 2.0
     κ = 4
 
-    vals = compute_activation.(t, τ, κ)
+    vals = cell_activation_func.(t, τ, κ)
     _,mi = findmax(vals)
     @test t[mi] ≈ τ atol = 1e-2
 
@@ -46,7 +46,7 @@ using SafeTestsets
     τ = 4.0
     κ = 2
 
-    vals = compute_activation.(t, τ, κ)
+    vals = cell_activation_func.(t, τ, κ)
     _,mi = findmax(vals)
     @test t[mi] ≈ τ atol = 1e-2
 end
@@ -68,12 +68,6 @@ end
 
     # # Define FPs
     # FP = np.array([.5,])
-
-    # # Define distribution (use shortcut "uni" to specify the uniform FP distribution)
-    # distr = 'uni'
-
-    # # Set-up experiment using "FPexp"
-    # exp = FPexp(FPs = FP, distribution = distr, tr_per_block = 2)                          
 
     # # Run experiment using object "exp" and "fmtp"
     # #state_discr, state_con = exp.run_exp(fmtp) 

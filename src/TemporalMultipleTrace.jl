@@ -1,6 +1,8 @@
 module TemporalMultipleTrace
     using ConcreteStructs, HCubature
-    export FMTPModel, compute_activation, compute_weight
+    export FMTPModel, cell_activation_func, compute_weight
+    export precompute_weights, decay_func
+
 
     include("structs.jl")
     include("functions.jl")

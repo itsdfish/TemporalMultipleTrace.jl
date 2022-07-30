@@ -8,13 +8,11 @@ Model object for formal multiple trace theory of temporal preparation.
 # Fields
 
 - `τs`: a vector containing the time of at maximum fire rate for each timing cell``
-- `τ_min`: minium τ
-- `τ_max`: maximum τ
-- `Δt`: time step
 - `κ`: temporal smearing parameter
 - `c`: time persistance parameter 
 - `λ`: decay parameter
-- `n_cells`: number of temporal cells
+- `u_act_weights`: a dictionary of unique activation weights 
+- `u_inhib_weights`: a dictionary of unique inhabition weights
 
 # References
 
@@ -23,50 +21,42 @@ Psychological Review.
 """
 @concrete mutable struct FMTPModel <: AbstractFMTP
     τs
-    τ_min
-    τ_max
-    Δt 
     κ
     c 
     λ
-    n_cells
+    u_act_weights
+    u_inhib_weights    
 end
 
 """
     FMTPModel(;
         τs,
-        τ_min,
-        τ_max,
-        Δt, 
         κ,
         c, 
-        λ,
-        n_cells)
+        λ, 
+        u_act_weights,
+        u_inhib_weights)
 
 Constructor for the FMPTModel object. 
 
 # Arguments
 
 - `τs`: a vector containing the time of at maximum fire rate for each timing cell``
-- `τ_min`: minium τ
-- `τ_max`: maximum τ
-- `Δt`: time step
 - `κ`: temporal smearing parameter
 - `c`: time persistance parameter 
 - `λ`: decay parameter
-- `n_cells`: number of temporal cells
+- `u_act_weights`: a dictionary of unique activation weights 
+- `u_inhib_weights`: a dictionary of unique inhabition weights
 """
 
 function FMTPModel(;
     τs,
-    τ_min,
-    τ_max,
-    Δt, 
     κ,
     c, 
-    λ,
-    n_cells)
-    return FMTPModel(τs, τ_min, τ_max, Δt, κ, c, λ, n_cells)
+    λ, 
+    u_act_weights,
+    u_inhib_weights)
+    return FMTPModel(τs, κ, c, λ, u_act_weights, u_inhib_weights)
 end
 
 abstract type AbstractTask end
