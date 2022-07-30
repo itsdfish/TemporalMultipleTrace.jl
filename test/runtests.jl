@@ -1,6 +1,6 @@
 using SafeTestsets
 
-@safetestset "compute_activation" begin
+@safetestset "cell_activation_func" begin
     using Test, TemporalMultipleTrace
     t = range(.1, 5, length=10)
     τ = 2.0
@@ -100,4 +100,63 @@ end
     # activation weight 
     aw = compute_weight(fp, fp +.3, τ, κ)
     @test aw ≈ 0.08555665 atol = 1e-3
+end
+
+@safetestset "motor_prep_func" begin
+    using Test, TemporalMultipleTrace
+
+    # # Temporal smear 
+    # k = 4 
+
+    # # Forgetting curve    
+    # r = -2.81 # rate of forgetting
+    # c = 1e-4 # memory persistence
+    # N = 5 # number of time cells
+    # dt = .00001 # increase precision
+
+    # # Initialize fMTP class
+    # fmtp = fMTP(r, c, k, N=N, dt=dt)
+
+    # # Define FPs
+    # FP = np.array([.6,.5,.5,.7,.6])                        
+
+    # # Run experiment using object "exp" and "fmtp"
+    # #state_discr, state_con = exp.run_exp(fmtp) 
+    # fmtp.trace_formation(FP)
+    # A,I = fmtp.trace_expression(FP)
+    # fmtp.prep
+    
+    # based on the Python code above
+    true_values = [NaN, .27214065, 0.19634961, 0.17796459, 0.34751846]
+
+    τs = range(.05, 5, length=5)
+    κ = 4
+    ufps = [.7,.5,.6]
+    λ = 2.81
+    c = 1e-4
+
+    act_ω,inhib_ω = precompute_weights(τs, κ, ufps)
+
+    model = FMTPModel(;τs, κ, λ, c, act_ω, inhib_ω)
+
+    fps = [.6,]
+    t = .5
+    push!(fps, t)
+    prep = motor_prep_func(model, t, fps)
+    @test prep ≈ true_values[2] atol = 1e-4
+
+    t = .5
+    push!(fps, t)
+    prep = motor_prep_func(model, t, fps)
+    @test prep ≈ true_values[3] atol = 1e-4
+
+    t = .7
+    push!(fps, t)
+    prep = motor_prep_func(model, t, fps)
+    @test prep ≈ true_values[4] atol = 1e-4
+
+    t = .6
+    push!(fps, t)
+    prep = motor_prep_func(model, t, fps)
+    @test prep ≈ true_values[5] atol = 1e-4
 end

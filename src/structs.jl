@@ -11,8 +11,8 @@ Model object for formal multiple trace theory of temporal preparation.
 - `κ`: temporal smearing parameter
 - `c`: time persistance parameter 
 - `λ`: decay parameter
-- `u_act_weights`: a dictionary of unique activation weights 
-- `u_inhib_weights`: a dictionary of unique inhabition weights
+- `act_ω`: a dictionary of unique activation weights 
+- `inhib_ω`: a dictionary of unique inhabition weights
 
 # References
 
@@ -24,8 +24,8 @@ Psychological Review.
     κ
     c 
     λ
-    u_act_weights
-    u_inhib_weights    
+    act_ω    
+    inhib_ω    
 end
 
 """
@@ -34,8 +34,8 @@ end
         κ,
         c, 
         λ, 
-        u_act_weights,
-        u_inhib_weights)
+        act_ω,
+        inhib_ω)
 
 Constructor for the FMPTModel object. 
 
@@ -45,8 +45,8 @@ Constructor for the FMPTModel object.
 - `κ`: temporal smearing parameter
 - `c`: time persistance parameter 
 - `λ`: decay parameter
-- `u_act_weights`: a dictionary of unique activation weights 
-- `u_inhib_weights`: a dictionary of unique inhabition weights
+- `act_ω`: a dictionary of unique activation weights 
+- `inhib_ω`: a dictionary of unique inhabition weights
 """
 
 function FMTPModel(;
@@ -54,9 +54,9 @@ function FMTPModel(;
     κ,
     c, 
     λ, 
-    u_act_weights,
-    u_inhib_weights)
-    return FMTPModel(τs, κ, c, λ, u_act_weights, u_inhib_weights)
+    act_ω,
+    inhib_ω)
+    return FMTPModel(τs, κ, c, λ, act_ω, inhib_ω)
 end
 
 abstract type AbstractTask end
