@@ -1,7 +1,7 @@
 abstract type AbstractFMTP end 
 
 """
-    FMTPModel
+    FMTPModel <: AbstractFMTP   
 
 Model object for formal multiple trace theory of temporal preparation.
 
@@ -18,7 +18,8 @@ Model object for formal multiple trace theory of temporal preparation.
 
 # References
 
-Salet, J. M., Kruijne, W., van Rijn, H., Los, S. A., & Meeter, M. (2022). FMTP: A unifying computational framework of temporal preparation across time scales. Psychological Review.
+Salet, J. M., Kruijne, W., van Rijn, H., Los, S. A., & Meeter, M. (2022). FMTP: A unifying computational framework of temporal preparation across time scales. 
+Psychological Review.
 """
 @concrete mutable struct FMTPModel <: AbstractFMTP
     τs

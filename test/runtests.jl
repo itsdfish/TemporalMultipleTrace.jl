@@ -32,4 +32,78 @@ using SafeTestsets
 
     vals = compute_activation.(t, τ, κ)
     @test true_vals ≈ vals
+
+    t = range(1, 3, length=200)
+    τ = 2.0
+    κ = 4
+
+    vals = compute_activation.(t, τ, κ)
+    _,mi = findmax(vals)
+    @test t[mi] ≈ τ atol = 1e-2
+
+
+    t = range(3, 5, length=200)
+    τ = 4.0
+    κ = 2
+
+    vals = compute_activation.(t, τ, κ)
+    _,mi = findmax(vals)
+    @test t[mi] ≈ τ atol = 1e-2
+end
+
+@safetestset "compute_weight" begin
+    using Test, TemporalMultipleTrace
+
+    # tests based on python code
+    # Temporal smear 
+    # k = 4 
+
+    # # Forgetting curve    
+    # r = -2.81 # rate of forgetting
+    # c = 1e-4 # memory persistence
+    # N = 5 # number of time cells
+
+    # # Initialize fMTP class
+    # fmtp = fMTP(r, c, k, N=N)
+
+    # # Define FPs
+    # FP = np.array([.5,])
+
+    # # Define distribution (use shortcut "uni" to specify the uniform FP distribution)
+    # distr = 'uni'
+
+    # # Set-up experiment using "FPexp"
+    # exp = FPexp(FPs = FP, distribution = distr, tr_per_block = 2)                          
+
+    # # Run experiment using object "exp" and "fmtp"
+    # #state_discr, state_con = exp.run_exp(fmtp) 
+    # fmtp.trace_formation(FP)
+    # # weights at tau = .05
+    # fmtp.W[0]
+    # # weights at tau = 1.2875
+    # fmtp.W[1,0,:]
+
+    fp = .5
+    τ = .05
+    κ = 4
+
+    # inhabition weight 
+    iw = compute_weight(0, fp - .05, τ, κ)
+    @test iw ≈ 1.0
+
+    # activation weight 
+    aw = compute_weight(fp, fp +.3, τ, κ)
+    @test aw ≈ 5.2039024e-13 atol = 1e-5
+
+    fp = .5
+    τ = 1.2875
+    κ = 4
+
+    # inhabition weight 
+    iw = compute_weight(0, fp -.05, τ, κ)
+    @test iw ≈ 0.01411575 atol = 1e-3
+
+    # activation weight 
+    aw = compute_weight(fp, fp +.3, τ, κ)
+    @test aw ≈ 0.08555665 atol = 1e-3
 end
