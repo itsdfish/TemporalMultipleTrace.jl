@@ -72,21 +72,67 @@ function precompute_weights(τs, κ, ufps)
     return aws, iws
 end
 
-function inner_weight_func(λ, c, tidx, τidx, weights, fp)
-    return  weights[fp][τidx] * decay_func(tidx, λ, c)
+"""
+    decay_trace_func(λ, c, tidx, τidx, weights, fp)
+
+Adds decay to activation or inhibition stored in a memory trace. See summation of 
+equations 7a and 7b.
+
+# Arguments
+
+- `λ`: decay parameter
+- `c`: time persistance parameter 
+- `tidx`: number of trials ago a trace was formed
+- `τidx`: index for timing cell
+- `weights`: a dictionary of unique weights for activation or inhibition
+- `fp`: duration of a forepriod
+"""
+function decay_trace_func(λ, c, tidx, τidx, weights, fp)
+    return weights[fp][τidx] * decay_func(tidx, λ, c)
 end
 
+
+"""
+    trace_weight_func(λ, c, τidx, weights, fps)
+
+Computes decay weighted sum of activation or inhibition stored in memory traces. This function 
+implements equation 7a and 7b.
+
+# Arguments
+
+- `λ`: decay parameter
+- `c`: time persistance parameter 
+- `τidx`: index for timing cell
+- `weights`: a dictionary of unique weights for activation or inhibition
+- `fp`: duration of a forepriod
+"""
 function trace_weight_func(λ, c, τidx, weights, fps)
     val = 0.0
     n_fp = length(fps)
     for i in 1:(n_fp - 1)
         tidx = n_fp - i + 1
-        val += inner_weight_func(λ, c, tidx, τidx, weights, fps[i])
+        val += decay_trace_func(λ, c, tidx, τidx, weights, fps[i])
     end
     return val
 end
 
-function total_weight_func(λ, c, τs, κ, t, weights, fps)
+
+"""
+    trace_expression_func(λ, c, τs, κ, t, weights, fps)
+
+Computes the trace expression according to equations 8a and 8b.
+
+# Arguments
+
+- `λ`: decay parameter
+- `c`: time persistance parameter 
+- `τs`: a vector containing the time of at maximum fire rate for each timing cell``
+- `κ`: temporal smearing parameter
+- `t`: time of stimulus onset
+- `weights`: a dictionary of unique weights for activation or inhibition
+- `fps`: a vector of foreperiods
+"""
+function trace_expression_func(λ, c, τs, κ, t, weights, fps)
     val = 0.0
     for i in 1:length(τs)
         val += cell_activation_func(t, τs[i], κ) * trace_weight_func(λ, c, i, weights, fps)
@@ -111,8 +157,8 @@ function motor_prep_func(model::AbstractFMTP, t, fps)
 end
 
 function motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, t, fps)
-    act = total_weight_func(λ, c, τs, κ, t, act_ω, fps)
-    inhib = total_weight_func(λ, c, τs, κ, t, inhib_ω, fps)
+    act = trace_expression_func(λ, c, τs, κ, t, act_ω, fps)
+    inhib = trace_expression_func(λ, c, τs, κ, t, inhib_ω, fps)
     return inhib / act 
 end
 
