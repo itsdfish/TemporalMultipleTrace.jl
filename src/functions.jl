@@ -73,7 +73,6 @@ function precompute_weights(τs, κ, ufps)
 end
 
 function inner_weight_func(λ, c, tidx, τidx, weights, fp)
-#    println("fp ", fp, " tidx ", tidx, " decay ", decay_func(tidx, λ, c))
     return  weights[fp][τidx] * decay_func(tidx, λ, c)
 end
 
@@ -81,22 +80,62 @@ function trace_weight_func(λ, c, τidx, weights, fps)
     val = 0.0
     n_fp = length(fps)
     for i in 1:(n_fp - 1)
-        val += inner_weight_func(λ, c, n_fp - i + 1, τidx, weights, fps[i])
+        tidx = n_fp - i + 1
+        val += inner_weight_func(λ, c, tidx, τidx, weights, fps[i])
     end
     return val
 end
 
 function total_weight_func(λ, c, τs, κ, t, weights, fps)
     val = 0.0
-    for (i,τ) in enumerate(τs)
-        val += cell_activation_func(t, τ, κ) * trace_weight_func(λ, c, i, weights, fps)
+    for i in 1:length(τs)
+        val += cell_activation_func(t, τs[i], κ) * trace_weight_func(λ, c, i, weights, fps)
     end
     return val
 end
 
-function motor_prep_func(model, t, fps)
+"""
+    motor_prep_func(model::AbstractFMTP, t, fps)
+
+Computes motor preparation at time `t` given a vector of foreperiods.
+
+# Arguments
+
+- `model`: `AbstractFMTP` model object 
+- `fps`: a vector of forperiods
+- `t`: time at stimulus onset
+"""
+function motor_prep_func(model::AbstractFMTP, t, fps)
     (;λ,c,τs,κ,act_ω,inhib_ω) = model
+    return motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, t, fps)
+end
+
+function motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, t, fps)
     act = total_weight_func(λ, c, τs, κ, t, act_ω, fps)
     inhib = total_weight_func(λ, c, τs, κ, t, inhib_ω, fps)
     return inhib / act 
+end
+
+function motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, fps)
+    return motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, fps[end], fps)
+end
+
+function motor_prep_func(model::AbstractFMTP, fps)
+    return motor_prep_func(model::AbstractFMTP, fps[end], fps)
+end
+
+"""
+    motor_preps_func(model::AbstractFMTP, fps)
+
+Computes motor preparation for a vector of foreperiods.
+
+# Arguments
+
+- `model`: `AbstractFMTP` model object 
+- `fps`: a vector of forperiods
+"""
+function motor_preps_func(model::AbstractFMTP, fps)
+    (;λ,c,τs,κ,act_ω,inhib_ω) = model
+    func(t) = motor_prep_func(λ, c, τs, κ, act_ω, inhib_ω, @view fps[1:t])
+    return map(func, 2:length(fps))
 end

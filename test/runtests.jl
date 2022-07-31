@@ -125,7 +125,7 @@ end
     # fmtp.trace_formation(FP)
     # A,I = fmtp.trace_expression(FP)
     # fmtp.prep
-    
+
     # based on the Python code above
     true_values = [NaN, .27214065, 0.19634961, 0.17796459, 0.34751846]
 
@@ -159,4 +159,81 @@ end
     push!(fps, t)
     prep = motor_prep_func(model, t, fps)
     @test prep ≈ true_values[5] atol = 1e-4
+end
+
+@safetestset "motor_preps_func" begin
+    using Test, TemporalMultipleTrace
+
+    # based on the Python code above
+    true_values = [.27214065, 0.19634961, 0.17796459, 0.34751846]
+
+    τs = range(.05, 5, length=5)
+    κ = 4
+    ufps = [.7,.5,.6]
+    λ = 2.81
+    c = 1e-4
+
+    act_ω,inhib_ω = precompute_weights(τs, κ, ufps)
+
+    model = FMTPModel(;τs, κ, λ, c, act_ω, inhib_ω)
+
+    fps = [.6,.5,.5,.7,.6]
+    prep = motor_preps_func(model, fps)
+    @test prep ≈ true_values atol = 1e-4
+
+    # based on the Python code above
+    true_values = [0.16330973, 2.37270496, 2.73363641, 1.18045448,
+    6.31565303, 3.27070813]
+    fps = [.5,1.5,1.5,.7,2.3,.3,.5]
+
+    τs = range(.05, 5, length=5)
+    κ = 4
+    ufps = unique(fps)
+    λ = 2.81
+    c = 1e-4
+
+    act_ω,inhib_ω = precompute_weights(τs, κ, ufps)
+
+    model = FMTPModel(;τs, κ, λ, c, act_ω, inhib_ω)
+
+    prep = motor_preps_func(model, fps)
+    @test prep ≈ true_values atol = 1e-4
+
+
+    # based on the Python code above
+    true_values = [0.25434547,  2.75502982,  8.17739472,  1.14787027,
+    30.69833091,  1.57093889]
+    fps = [.5,1.5,1.5,.7,2.3,.3,.5]
+
+    τs = range(.05, 5, length=50)
+    κ = 4
+    ufps = unique(fps)
+    λ = 2.81
+    c = 1e-4
+
+    act_ω,inhib_ω = precompute_weights(τs, κ, ufps)
+
+    model = FMTPModel(;τs, κ, λ, c, act_ω, inhib_ω)
+
+    prep = motor_preps_func(model, fps)
+    @test prep ≈ true_values atol = 1e-3
+
+
+    # based on the Python code above
+    true_values = [4.93008748, 88.97009508,  4.33771663,  9.12580015,
+    17.82549668]
+    fps = [2.4,3.0,.5,4.0,3.2,1.0]
+
+    τs = range(.05, 5, length=50)
+    κ = 3
+    ufps = unique(fps)
+    λ = 1.5
+    c = 1e-4
+
+    act_ω,inhib_ω = precompute_weights(τs, κ, ufps)
+
+    model = FMTPModel(;τs, κ, λ, c, act_ω, inhib_ω)
+
+    prep = motor_preps_func(model, fps)
+    @test prep ≈ true_values atol = 1e-3
 end
