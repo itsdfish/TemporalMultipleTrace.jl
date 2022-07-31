@@ -8,7 +8,7 @@ Preparation Across Time Scales. The model is basically a neural network consisti
 To install the package, enter the following in to the REPL:
 
 ```julia 
-] https://github.com/itsdfish/TemporalMultipleTrace.jl
+] add https://github.com/itsdfish/TemporalMultipleTrace.jl
 ```
 
 # Basic Usage
